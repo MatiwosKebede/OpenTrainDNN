@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenTrainDNN — watch a neural network learn in your browser</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1><span class="dot"></span>OpenTrainDNN — Camera + Microphone</h1>
+<p class="sub">Same network, two input types. Learn from images or from sound — the pipeline is identical.</p>
+
+<div class="panel dnnWrap">
+  <div class="dnnHeader">
+    <h2>DNN Architecture <em>— live weights · strength encoded as thickness + glow</em></h2>
+    <div class="info" id="dnnInfo">—</div>
+  </div>
+  <canvas id="dnnView"></canvas>
+  <div class="legend">
+    <span class="item"><span class="lbl2">weak 0.1</span>
+      <span class="swatch"><svg width="36" height="12"><line x1="0" y1="6" x2="36" y2="6" stroke="#35e08a" stroke-width="0.5" stroke-opacity="0.15" stroke-linecap="round"/></svg></span>
+    </span>
+    <span class="item"><span class="lbl2">medium 0.7</span>
+      <span class="swatch"><svg width="36" height="12"><line x1="0" y1="6" x2="36" y2="6" stroke="#35e08a" stroke-width="1.8" stroke-opacity="0.55" stroke-linecap="round"/></svg></span>
+    </span>
+    <span class="item"><span class="lbl2">strong 2.0</span>
+      <span class="swatch"><svg width="36" height="12"><line x1="0" y1="6" x2="36" y2="6" stroke="#35e08a" stroke-width="5" stroke-opacity="0.95" stroke-linecap="round"/></svg></span>
+    </span>
+    <span class="item"><span style="color:#35e08a">green = positive</span></span>
+    <span class="item"><span style="color:#ff6b6b">red = negative</span></span>
+    <span class="item"><span style="color:#5ab1ff">V = validation sample</span></span>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div>
+    <div class="panel">
+      <h2><span id="liveTitle">Live view</span> <em id="liveSrc">idle</em></h2>
+      <canvas id="live"></canvas>
+      <div class="predBox">
+        <div class="lbl">Prediction</div>
+        <div class="winner" id="predWinner" style="color:var(--dim)">—</div>
+        <div id="predBars"></div>
+        <small id="predNote">no model trained yet</small>
+      </div>
+      <div class="btns">
+        <button class="act pri" id="startBtn">▶ Start</button>
+        <button class="act" id="stopBtn">■ Stop</button>
+      </div>
+      <div class="tip" id="liveTip">Camera: capture 20–30 images per class. Keys <b>1</b>–<b>9</b> grab the live frame. Microphone: say a word 20–30 times per class.</div>
+    </div>
+
+    <div class="panel" id="featurePanel" style="margin-top:12px">
+      <h2>Feature maps <em>conv layer 1 · ReLU output</em></h2>
+      <div class="featGrid" id="featGrid"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Classes <em id="classCount">2</em></h2>
+    <div id="classesWrap"></div>
+    <button id="addClassBtn">+ Add class</button>
+  </div>
+
+  <div class="panel">
+    <div class="lbl">Input source</div>
+    <div class="seg src" id="srcSeg">
+      <button data-src="camera" class="on">📷 Camera</button>
+      <button data-src="mic">🎤 Microphone</button>
+    </div>
+    <div class="tip" id="srcTip">Camera: spatial pattern of light. Microphone: 16×16 mel spectrogram of sound.</div>
+
+    <div class="lbl">Network type</div>
+    <div class="seg" id="netSeg">
+      <button data-net="dense" class="on">Dense</button>
+      <button data-net="cnn">CNN</button>
+    </div>
+
+    <div class="lbl" id="archLbl">Hidden layers (Dense)</div>
+    <input type="text" id="archIn" class="archIn" value="32-16"
+           spellcheck="false" autocomplete="off">
+    <div class="archFull" id="archFull">—</div>
+
+    <div class="lbl">Neuron type</div>
+    <div class="seg" id="modeSeg">
+      <button data-mode="abstract" class="on">Math</button>
+      <button data-mode="physical">Devices</button>
+    </div>
+
+    <div class="lbl">Input resolution</div>
+    <div class="seg grid" id="sizeSeg">
+      <button data-sz="4">4×4</button>
+      <button data-sz="6">6×6</button>
+      <button data-sz="8">8×8</button>
+      <button data-sz="10">10×10</button>
+      <button data-sz="12">12×12</button>
+      <button data-sz="16" class="on">16×16</button>
+      <button data-sz="20">20×20</button>
+      <button data-sz="24">24×24</button>
+      <button data-sz="32">32×32</button>
+      <button data-sz="40">40×40</button>
+      <button data-sz="48">48×48</button>
+      <button data-sz="64">64×64</button>
+    </div>
+
+    <button class="act pri" id="train" style="margin-top:12px">▶ Train</button>
+    <div class="btns three">
+      <button class="act" id="reset">Reset</button>
+      <button class="act" id="saveBtn">💾 Save</button>
+      <button class="act" id="loadBtn">📂 Load</button>
+    </div>
+    <button class="act warn" id="clear" style="margin-top:6px">Clear data</button>
+    <input type="file" id="loadFile" accept=".json" hidden>
+
+    <div class="lbl">Readout</div>
+    <div class="ro"><span>Train accuracy</span><b class="g" id="ro-acc">—</b></div>
+    <div class="ro"><span>Val accuracy</span><b class="y" id="ro-vacc">—</b></div>
+    <div class="ro"><span>Best val</span><b id="ro-best">—</b></div>
+    <div class="ro"><span>Loss</span><b id="ro-loss">—</b></div>
+    <div class="ro"><span>Steps</span><b id="ro-steps">0</b></div>
+    <div class="ro"><span>Network</span><b id="ro-arch">—</b></div>
+    <div class="ro"><span>Parameters</span><b id="ro-par">—</b></div>
+    <div class="ro"><span>Input</span><b id="ro-in">—</b></div>
+    <div class="ro"><span>Classes</span><b id="ro-cls">—</b></div>
+    <div class="ro"><span>|w| range</span><b class="y" id="ro-wr">—</b></div>
+    <div id="valWarn">
+      <b>Overfitting detected.</b> Validation accuracy has dropped below its peak of
+      <span id="warnBest">—</span>. Stop training and click Reset, or add more
+      training samples.
+    </div>
+  </div>
+
+</div>
+
+<script src="js/math.js"></script>
+<script src="js/state.js"></script>
+<script src="js/input.js"></script>
+<script src="js/network.js"></script>
+<script src="js/visualize.js"></script>
+<script src="js/classes.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

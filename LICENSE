@@ -1,0 +1,98 @@
+# MIT License
+
+Copyright (c) 2026 Matiyos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+## Why this license
+
+You are free to:
+
+| | |
+|---|---|
+| ✅ | **Use** the software for any purpose, commercial or personal |
+| ✅ | **Study** the source code and learn from it |
+| ✅ | **Modify** the software to suit your needs |
+| ✅ | **Distribute** copies to anyone |
+| ✅ | **Sell** copies or derivative works |
+| ✅ | **Sublicense** under different terms |
+
+The only requirements:
+
+| | |
+|---|---|
+| 📄 | **Include this license** and the copyright notice in any copy or substantial portion of the software |
+| 📄 | **State changes** if you modify the source (recommended, not strictly required by MIT) |
+
+The software comes with:
+
+| | |
+|---|---|
+| ⚠️ | **No warranty.** If it breaks, you keep both pieces. |
+| ⚠️ | **No liability.** The authors are not responsible for any damages. |
+
+That is the entire MIT license. It is one of the shortest and most permissive open-source licenses in existence. It is used by React, Node.js, jQuery, Rails, and hundreds of thousands of other projects.
+
+
+## Why MIT and not something else
+
+| License | Why not |
+|---|---|
+| **Apache 2.0** | Longer, includes a patent grant, adds legal complexity. Good for large projects, overkill for a teaching tool. |
+| **GPL 3.0** | Copyleft. Anyone who uses this code must also open-source their own project. Too restrictive for a tool meant to be copied and shared. |
+| **BSD 3-Clause** | Nearly identical to MIT. Adds a clause about not using contributor names for promotion. Not needed here. |
+| **Unlicense / CC0** | Public domain. Removes even the requirement to preserve copyright. Less clear in some jurisdictions. |
+| **MPL 2.0** | File-level copyleft. Middle ground. Adds complexity without benefit for this project. |
+
+MIT is the right choice. It is the standard for small, permissive, educational JavaScript projects. It matches what a user expects when they clone a repository like this one.
+
+
+## What this means for contributors
+
+By submitting a pull request to this repository, you agree that your contribution is licensed under the same MIT terms. You keep the copyright to your contribution, but you grant everyone the same rights to use, modify, and distribute it as the rest of the project.
+
+You do not need to sign a Contributor License Agreement. You do not need to assign copyright. You do not need to do anything other than open the pull request.
+
+
+## What this means for users
+
+You can:
+
+- Drop this tool into a commercial product
+- Use it in a classroom without paying anything
+- Modify it for your own research
+- Rebrand it and distribute it
+- Include it in a larger project
+- Print the source code and put it on a wall
+
+You cannot:
+
+- Sue the author if it breaks
+- Claim the original author endorses your derivative work
+- Remove the license file from a redistributed copy
+
+That is the whole deal. It is designed to be as close to "do whatever you want" as a legal document can get.
+
+
+<div align="center">
+
+**MIT — because the point of this tool is that anyone can use it.**
+
+</div>

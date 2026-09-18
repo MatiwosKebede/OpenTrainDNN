@@ -1,0 +1,45 @@
+# Operating system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Node (if someone runs a tool locally — should not be needed)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python (for the local http.server)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Local screenshots and test assets
+/screenshots-local/
+/test-assets/
+
+# Build artifacts (this project has none, but be safe)
+/dist/
+/build/
