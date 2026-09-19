@@ -1,5 +1,3 @@
-<div align="center">
-
 # OpenTrainDNN
 
 **Watch a neural network learn — in your browser.**
@@ -8,21 +6,27 @@ Open one HTML file. Point your camera or microphone at two things.
 Capture twenty samples of each. Press **Train**.
 Every neuron, every weight, every activation updates on screen in real time.
 
-<br>
+![OpenTrainDNN screenshot](docs/screenshot.png)
 
-[![Install](https://img.shields.io/badge/install-none-success?style=flat-square)](#requirements)
-[![Build](https://img.shields.io/badge/build-none-success?style=flat-square)](#requirements)
-[![Backend](https://img.shields.io/badge/backend-none-success?style=flat-square)](#requirements)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-
-[Features](#features) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Contributing](#contributing) · [License](#license)
-
-</div>
+**No install. No build step. No framework. No backend.**
 
 
 > **A note on the name.** This project is unrelated to OpenTrain AI (a data-labeling marketplace) and to Intel oneDNN (a deep-learning performance library). Same words, entirely different projects.
+
+
+## Table of contents
+
+- [Why this exists](#why-this-exists)
+- [Features](#features)
+- [Quick start](#quick-start)
+- [What it can and cannot learn](#what-it-can-and-cannot-learn)
+- [Project structure](#project-structure)
+- [How it works](#how-it-works)
+- [What it demonstrates](#what-it-demonstrates)
+- [Requirements](#requirements)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
 
 
 ## Why this exists
@@ -83,6 +87,10 @@ Prefer to serve it? Run a local server from the project folder:
 
 Then open `http://localhost:8000/`.
 
+You can also use the live version hosted on GitHub Pages:
+
+`https://MatiwosKebede.github.io/OpenTrainDNN/`
+
 ### 2. Train your first network
 
 1. Click **Start camera**. Allow the permission prompt.
@@ -123,6 +131,18 @@ That is the entire system end-to-end: **real signal → real numbers → real le
 OpenTrainDNN/
 ├── index.html          — markup
 ├── style.css           — styling
+├── README.md           — this file
+├── CONTRIBUTING.md     — how to contribute
+├── CODE_OF_CONDUCT.md  — community standards
+├── SECURITY.md         — disclosure policy
+├── CHANGELOG.md        — version history
+├── LICENSE             — MIT
+├── docs/
+│   └── screenshot.png  — README image
+├── .github/
+│   ├── ISSUE_TEMPLATE/ — bug and feature templates
+│   ├── workflows/      — Pages deployment
+│   └── PULL_REQUEST_TEMPLATE.md
 └── js/
     ├── math.js         — pure helpers, activations, MOSFET model
     ├── state.js        — every mutable global
@@ -228,11 +248,7 @@ See [SECURITY.md](SECURITY.md) for the disclosure policy.
 MIT. See [LICENSE](LICENSE) for the full text.
 
 
-<div align="center">
-
-**Developed  by Matiwos Kebede**
+** Developed by Matiwos Kebede**
 
 *The same learning algorithm runs in a browser tab and in a data center.*
 *The difference is only scale.*
-
-</div>
