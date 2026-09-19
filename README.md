@@ -11,9 +11,6 @@ Every neuron, every weight, every activation updates on screen in real time.
 **No install. No build step. No framework. No backend.**
 
 
-> **A note on the name.** This project is unrelated to OpenTrain AI (a data-labeling marketplace) and to Intel oneDNN (a deep-learning performance library). Same words, entirely different projects.
-
-
 ## Table of contents
 
 - [Why this exists](#why-this-exists)
