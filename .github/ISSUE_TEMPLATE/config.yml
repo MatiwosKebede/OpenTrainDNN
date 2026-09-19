@@ -1,0 +1,81 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Question or discussion
+    url: https://github.com/Matiyos/OpenTrainDNN/discussions
+    about: Ask a question, share a demo, or discuss ideas that are not yet a bug or feature.
+
+  - name: Security vulnerability
+    url: https://github.com/Matiyos/OpenTrainDNN/security/policy
+    about: Please do not report security issues in public. See SECURITY.md for the process.
+
+  - name: Read the README first
+    url: https://github.com/Matiyos/OpenTrainDNN/blob/main/README.md
+    about: Many questions are already answered in the README. Please check before opening an issue.
+
+
+**File 4b — PULL_REQUEST_TEMPLATE.md**
+
+Create this at `~/Documents/Project/OpenTrainDNN/.github/PULL_REQUEST_TEMPLATE.md`
+
+Note: this file lives directly inside `.github/`, not inside `.github/ISSUE_TEMPLATE/`.
+
+
+Thank you for opening a pull request. Please fill in the sections below so the review is fast.
+
+## What this PR does
+
+A short, clear description of what changed and why. Link to the issue this closes, if there is one.
+
+Closes #
+
+## Type of change
+
+- [ ] Bug fix, non-breaking change that fixes an issue
+- [ ] New feature, non-breaking change that adds functionality
+- [ ] Documentation update
+- [ ] Performance improvement
+- [ ] Refactor, no behaviour change
+- [ ] Breaking change, existing functionality changes
+
+## How has this been tested?
+
+- Browser:
+- Input source:
+- Network type:
+- Input resolution:
+- Number of classes:
+
+### Test checklist
+
+- [ ] Page loads without console errors
+- [ ] Start camera works
+- [ ] Start microphone works
+- [ ] Capture works from the active source
+- [ ] Train runs and loss decreases
+- [ ] Prediction updates in real time
+- [ ] Save produces a valid JSON file
+- [ ] Load restores the weights correctly
+- [ ] Reset clears the network
+- [ ] Clear removes all samples
+
+## Screenshots and recordings
+
+If the change is visual, attach a before-and-after screenshot or a short recording. Drag and drop files into this box.
+
+## Checklist
+
+- [ ] My code follows the style guide in CONTRIBUTING.md
+- [ ] I have read the "What we do not accept" section
+- [ ] I have not added new dependencies
+- [ ] I have not added a build step
+- [ ] I have not added a new architecture such as RNN, LSTM, Transformer, or attention
+- [ ] I have updated the README if behaviour changed
+- [ ] I have updated the CHANGELOG under Unreleased
+- [ ] I have tested on at least two browsers
+- [ ] My commit messages follow the project's conventions
+
+## Anything else
+
+Anything the reviewer should know: a tricky edge case, a design trade-off, a piece of code you are unsure about.
+
