@@ -14,11 +14,12 @@ const archIn   = $('archIn');
 const archFull = $('archFull');
 const archLbl  = $('archLbl');
 
+/* Up to 12 hidden layers, each 1 to 512 neurons. */
 function parseHidden(str){
   const nums = String(str).trim().split(/[^0-9]+/).filter(s=>s.length)
                     .map(s=>parseInt(s,10));
   if(!nums.length) return null;
-  return nums.slice(0,4).map(n=>clamp(n||1, 1, 128));
+  return nums.slice(0,12).map(n=>clamp(n||1, 1, 512));
 }
 
 function parseCnn(str){
@@ -26,9 +27,9 @@ function parseCnn(str){
                     .map(s=>parseInt(s,10));
   if(nums.length < 3) return null;
   return {
-    f1:    clamp(nums[0]||8,  1, 16),
-    f2:    clamp(nums[1]||16, 1, 32),
-    dense: clamp(nums[2]||32, 1, 128)
+    f1:    clamp(nums[0]||8,  1, 32),
+    f2:    clamp(nums[1]||16, 1, 64),
+    dense: clamp(nums[2]||32, 1, 256)
   };
 }
 
@@ -173,7 +174,6 @@ document.addEventListener('keydown', e=>{
   }
 });
 
-/* live view click clears preview */
 liveC.onclick = clearPreview;
 
 /* Input source toggle */

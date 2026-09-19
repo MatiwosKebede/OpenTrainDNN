@@ -286,10 +286,12 @@ function drawNeuron(cx, cy, r, v, dpr){
   dnnCtx.strokeStyle = 'rgba(10,14,21,0.95)';
   dnnCtx.lineWidth = 1.6*dpr;
   dnnCtx.stroke();
-  dnnCtx.beginPath();
-  dnnCtx.arc(cx - r*0.25, cy - r*0.25, r*0.28, 0, 6.2832);
-  dnnCtx.fillStyle = 'rgba(255,255,255,'+(0.15 + 0.35*a)+')';
-  dnnCtx.fill();
+  if(r > 4*dpr){
+    dnnCtx.beginPath();
+    dnnCtx.arc(cx - r*0.25, cy - r*0.25, r*0.28, 0, 6.2832);
+    dnnCtx.fillStyle = 'rgba(255,255,255,'+(0.15 + 0.35*a)+')';
+    dnnCtx.fill();
+  }
 }
 
 function drawDNNPreview(){
@@ -335,26 +337,39 @@ function drawDenseWithEdges(W, H, dpr){
   const boxY = topPad;
   const yMid = boxY + boxH/2;
 
-  const inputW = Math.min(180*dpr, boxH*0.86);
-  const stripW = 18*dpr;
-  const colW   = 56*dpr;
-  const outW   = 110*dpr;
+  /* ───────── input matches column height ───────── */
+  const colH   = boxH * 0.92;
   const nHidden = L.length - 1;
 
-  let gap = 70*dpr;
-  if(nHidden >= 3) gap = 50*dpr;
-  if(nHidden >= 4) gap = 38*dpr;
+  /* Column widths, output width, and the gap between layers.
+     Gaps are very large by default so every layer has clear,
+     visible breathing room. They shrink as the number of hidden
+     layers grows, so up to 12 layers still fit on screen.       */
+  let stripW = 12*dpr;
+  let colW   = 42*dpr;
+  let outW   = 84*dpr;
+  let gap    = 110*dpr;
 
-  const totalW = inputW + gap + stripW + gap
-               + nHidden * (colW + gap) + outW;
+  if(nHidden >= 3) gap = 95*dpr;
+  if(nHidden >= 4) gap = 80*dpr;
+  if(nHidden >= 6){ gap = 65*dpr; colW = 38*dpr; outW = 76*dpr; }
+  if(nHidden >= 8){ gap = 50*dpr; colW = 34*dpr; outW = 68*dpr; stripW = 10*dpr; }
+  if(nHidden >= 10){ gap = 38*dpr; colW = 30*dpr; outW = 60*dpr; stripW = 8*dpr; }
 
-  let x = Math.max(30*dpr, (W - totalW) / 2);
+  const fixedW = gap + stripW + gap
+               + nHidden * (colW + gap)
+               + outW;
+  const maxInputW = W - fixedW - 20*dpr;
+  const inputW = Math.max(40*dpr, Math.min(colH, maxInputW));
+
+  const totalW = inputW + fixedW;
+  let x = Math.max(12*dpr, (W - totalW) / 2);
 
   const inputX = x, inputY = yMid - inputW/2;
   drawInputImage(inputX, inputY, inputW, lastLiveVec, dpr);
   x += inputW + gap;
 
-  const stripX = x, stripH = boxH * 0.92, stripY = yMid - stripH/2;
+  const stripX = x, stripH = colH, stripY = yMid - stripH/2;
   const flat = f.acts[0];
   drawStrip(stripX, stripY, stripW, stripH, flat, dpr);
   const stripYof = i => stripY + (i + 0.5) * stripH / flat.length;
@@ -363,10 +378,9 @@ function drawDenseWithEdges(W, H, dpr){
   const hidden = [];
   for(let li=0; li<nHidden; li++){
     const nout = L[li].nout;
-    const colH = boxH * 0.92;
     const colY = yMid - colH/2;
     const rowH = colH / nout;
-    const radius = clamp(rowH * 0.32, 4*dpr, 9*dpr);
+    const radius = clamp(rowH * 0.32, 1.6*dpr, 9*dpr);
     const positions = [];
     for(let j=0; j<nout; j++){
       positions.push({ x: x + colW/2, y: colY + (j + 0.5) * rowH, r: radius });
@@ -377,10 +391,10 @@ function drawDenseWithEdges(W, H, dpr){
   }
 
   const outX = x;
-  const outColH = boxH * 0.92, outColY = yMid - outColH/2;
+  const outColY = yMid - colH/2;
   const nCls = classes.length;
-  const outRowH = outColH / nCls;
-  const outR = clamp(outRowH * 0.28, 12*dpr, 22*dpr);
+  const outRowH = colH / nCls;
+  const outR = clamp(outRowH * 0.28, 2*dpr, 22*dpr);
   const outPositions = [];
   for(let j=0; j<nCls; j++){
     outPositions.push({ x: outX + outR + 4*dpr,
@@ -389,7 +403,7 @@ function drawDenseWithEdges(W, H, dpr){
 
   if(hidden.length){
     const l0 = L[0], h1 = hidden[0];
-    const K = l0.nin > 256 ? 5 : (l0.nin > 64 ? 8 : l0.nin);
+    const K = l0.nin > 256 ? 4 : (l0.nin > 64 ? 6 : l0.nin);
     for(let j=0; j<h1.nout; j++){
       const base = j * l0.nin;
       const hp = h1.positions[j];
@@ -451,6 +465,16 @@ function drawDenseWithEdges(W, H, dpr){
     }
   }
 
+  /* ───────── output neuron labels adapt to the class count ─────────
+     6 or fewer:  full name + percentage
+     7 to 12:     shortened name + percentage
+     13 to 24:    percentage only
+     25 or more:  no labels, circles only                          */
+  const nClsLabelMode = nCls <= 6 ? 'full'
+                      : nCls <= 12 ? 'short'
+                      : nCls <= 24 ? 'pct'
+                      : 'none';
+
   for(let j=0; j<nCls; j++){
     const p = outPositions[j];
     const v = f.probs[j];
@@ -469,29 +493,45 @@ function drawDenseWithEdges(W, H, dpr){
     dnnCtx.strokeStyle = 'rgba(10,14,21,0.95)';
     dnnCtx.lineWidth = 1.8*dpr;
     dnnCtx.stroke();
-    dnnCtx.beginPath();
-    dnnCtx.arc(p.x - p.r*0.28, p.y - p.r*0.28, p.r*0.24, 0, 6.2832);
-    dnnCtx.fillStyle = 'rgba(255,255,255,0.35)';
-    dnnCtx.fill();
-    dnnCtx.fillStyle = '#e8f0ff';
-    dnnCtx.font = '700 '+(12*dpr)+'px ui-sans-serif,sans-serif';
-    dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
-    const nm = classes[j].name.length > 12
-      ? classes[j].name.slice(0, 11) + '…'
-      : classes[j].name;
-    dnnCtx.fillText(nm, p.x + p.r + 10*dpr, p.y - 7*dpr);
+    if(p.r > 8*dpr){
+      dnnCtx.beginPath();
+      dnnCtx.arc(p.x - p.r*0.28, p.y - p.r*0.28, p.r*0.24, 0, 6.2832);
+      dnnCtx.fillStyle = 'rgba(255,255,255,0.35)';
+      dnnCtx.fill();
+    }
+
+    if(nClsLabelMode === 'none') continue;
+
+    const labelX = p.x + p.r + 8*dpr;
+    const nameFont = nClsLabelMode === 'full' ? 12 : 10;
+    const pctFont  = nClsLabelMode === 'full' ? 14 : 12;
+    const maxNameChars = nClsLabelMode === 'full' ? 12 : 8;
+
+    if(nClsLabelMode !== 'pct'){
+      dnnCtx.fillStyle = '#e8f0ff';
+      dnnCtx.font = '700 '+(nameFont*dpr)+'px ui-sans-serif,sans-serif';
+      dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
+      const nm = classes[j].name.length > maxNameChars
+        ? classes[j].name.slice(0, maxNameChars - 1) + '…'
+        : classes[j].name;
+      dnnCtx.fillText(nm, labelX, p.y - 7*dpr);
+    }
+
     dnnCtx.fillStyle = classes[j].color;
-    dnnCtx.font = '700 '+(14*dpr)+'px ui-monospace,monospace';
-    dnnCtx.fillText((v*100).toFixed(1) + '%', p.x + p.r + 10*dpr, p.y + 10*dpr);
+    dnnCtx.font = '700 '+(pctFont*dpr)+'px ui-monospace,monospace';
+    dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
+    dnnCtx.fillText((v*100).toFixed(0) + '%',
+                    labelX, nClsLabelMode === 'pct' ? p.y : p.y + 10*dpr);
   }
 
+  /* ───────── top labels ───────── */
   dnnCtx.textAlign = 'center'; dnnCtx.textBaseline = 'bottom';
   dnnCtx.fillStyle = '#e8f0ff';
   dnnCtx.font = '700 '+(12*dpr)+'px ui-sans-serif,sans-serif';
   dnnCtx.fillText('INPUT',   inputX + inputW/2, 28*dpr);
   dnnCtx.fillText('FLATTEN', stripX + stripW/2, 28*dpr);
   for(const col of hidden){
-    dnnCtx.fillText('HIDDEN ' + (col.li + 1), col.x + col.w/2, 28*dpr);
+    dnnCtx.fillText('H' + (col.li + 1), col.x + col.w/2, 28*dpr);
   }
   dnnCtx.fillText('OUTPUT',  outX + outW/2, 28*dpr);
 
@@ -499,14 +539,14 @@ function drawDenseWithEdges(W, H, dpr){
   dnnCtx.font = '600 '+(10*dpr)+'px ui-monospace,monospace';
   dnnCtx.textBaseline = 'top';
   const inputLabel = inputSource === 'mic'
-    ? SIZE + '×' + SIZE + ' spectrogram'
-    : SIZE + '×' + SIZE + ' image';
+    ? SIZE + '×' + SIZE + ' spec'
+    : SIZE + '×' + SIZE + ' img';
   dnnCtx.fillText(inputLabel, inputX + inputW/2, 32*dpr);
-  dnnCtx.fillText(flat.length + ' values', stripX + stripW/2, 32*dpr);
+  dnnCtx.fillText(flat.length + ' vals', stripX + stripW/2, 32*dpr);
   for(const col of hidden){
-    dnnCtx.fillText(col.nout + ' neurons', col.x + col.w/2, 32*dpr);
+    dnnCtx.fillText(col.nout + ' n', col.x + col.w/2, 32*dpr);
   }
-  dnnCtx.fillText(nCls + (nCls===1 ? ' class' : ' classes'), outX + outW/2, 32*dpr);
+  dnnCtx.fillText(nCls + ' cls', outX + outW/2, 32*dpr);
 
   dnnCtx.textBaseline = 'top';
   dnnCtx.fillStyle = 'rgba(104,121,143,0.7)';
@@ -533,28 +573,29 @@ function drawCNNWithEdges(W, H, dpr){
     { type:'image',  title:'INPUT',  sub:H_in+'×'+H_in,
       values:lastLiveVec, C:1, GW:H_in, GH:H_in, desired: 110*dpr },
     { type:'fmaps',  title:'CONV 1',  sub:cnnCfg.f1+'@'+H_in,
-      values:c.layers[0].cache.output, C:cnnCfg.f1, GW:H_in, GH:H_in, desired: 150*dpr },
+      values:c.layers[0].cache.output, C:cnnCfg.f1, GW:H_in, GH:H_in, desired: 130*dpr },
     { type:'fmaps',  title:'RELU 1',  sub:cnnCfg.f1+'@'+H_in,
       values:c.layers[1].cache.output, C:cnnCfg.f1, GW:H_in, GH:H_in,
       desired: 60*dpr, skipDraw:true },
     { type:'fmaps',  title:'POOL 1',  sub:cnnCfg.f1+'@'+H1,
-      values:c.layers[2].cache.output, C:cnnCfg.f1, GW:H1, GH:H1, desired: 130*dpr },
+      values:c.layers[2].cache.output, C:cnnCfg.f1, GW:H1, GH:H1, desired: 115*dpr },
     { type:'fmaps',  title:'CONV 2',  sub:cnnCfg.f2+'@'+H1,
-      values:c.layers[3].cache.output, C:cnnCfg.f2, GW:H1, GH:H1, desired: 150*dpr },
+      values:c.layers[3].cache.output, C:cnnCfg.f2, GW:H1, GH:H1, desired: 130*dpr },
     { type:'fmaps',  title:'RELU 2',  sub:cnnCfg.f2+'@'+H1,
       values:c.layers[4].cache.output, C:cnnCfg.f2, GW:H1, GH:H1,
       desired: 60*dpr, skipDraw:true },
     { type:'fmaps',  title:'POOL 2',  sub:cnnCfg.f2+'@'+H2,
-      values:c.layers[5].cache.output, C:cnnCfg.f2, GW:H2, GH:H2, desired: 130*dpr },
+      values:c.layers[5].cache.output, C:cnnCfg.f2, GW:H2, GH:H2, desired: 115*dpr },
     { type:'strip',  title:'FLATTEN', sub:String(c.layers[6].cache.output.length),
       values:c.layers[6].cache.output, desired: 14*dpr },
     { type:'dots',   title:'DENSE',   sub:String(c.layers[7].outSize),
       values:c.layers[8].cache.output, n: c.layers[7].outSize, desired: 60*dpr },
     { type:'classes',title:'SOFTMAX', sub:classes.length+' cls',
-      values:c.layers[10].cache.probs, desired: 130*dpr }
+      values:c.layers[10].cache.probs, desired: 120*dpr }
   ];
 
-  const gap = 16*dpr;
+  /* CNN gap is larger too, so feature map layers have visible space */
+  const gap = 60*dpr;
   let totalW = 0;
   for(const ly of layers){
     if(ly.skipDraw) continue;
@@ -719,7 +760,11 @@ function drawCNNWithEdges(W, H, dpr){
       }
     } else if(ly.type === 'classes'){
       const n = ly.values.length;
-      const r = clamp(ly.h / n * 0.30, 12*dpr, 22*dpr);
+      const r = clamp(ly.h / n * 0.30, 2*dpr, 22*dpr);
+      const labelMode = n <= 6 ? 'full'
+                      : n <= 12 ? 'short'
+                      : n <= 24 ? 'pct'
+                      : 'none';
       for(let j=0; j<n; j++){
         const cy = nodeY(ly, j);
         const cx = ly.x + r + 6*dpr;
@@ -739,16 +784,25 @@ function drawCNNWithEdges(W, H, dpr){
         dnnCtx.strokeStyle = 'rgba(10,14,21,0.95)';
         dnnCtx.lineWidth = 1.8*dpr;
         dnnCtx.stroke();
-        dnnCtx.fillStyle = '#e8f0ff';
-        dnnCtx.font = '700 '+(12*dpr)+'px ui-sans-serif,sans-serif';
-        dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
-        const nm = classes[j].name.length > 12
-          ? classes[j].name.slice(0, 11) + '…'
-          : classes[j].name;
-        dnnCtx.fillText(nm, cx + r + 8*dpr, cy - 7*dpr);
+        if(labelMode === 'none') continue;
+        const labelX = cx + r + 8*dpr;
+        const nameFont = labelMode === 'full' ? 12 : 10;
+        const pctFont  = labelMode === 'full' ? 14 : 12;
+        const maxNameChars = labelMode === 'full' ? 12 : 8;
+        if(labelMode !== 'pct'){
+          dnnCtx.fillStyle = '#e8f0ff';
+          dnnCtx.font = '700 '+(nameFont*dpr)+'px ui-sans-serif,sans-serif';
+          dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
+          const nm = classes[j].name.length > maxNameChars
+            ? classes[j].name.slice(0, maxNameChars - 1) + '…'
+            : classes[j].name;
+          dnnCtx.fillText(nm, labelX, cy - 7*dpr);
+        }
         dnnCtx.fillStyle = classes[j].color;
-        dnnCtx.font = '700 '+(14*dpr)+'px ui-monospace,monospace';
-        dnnCtx.fillText((v*100).toFixed(1)+'%', cx + r + 8*dpr, cy + 10*dpr);
+        dnnCtx.font = '700 '+(pctFont*dpr)+'px ui-monospace,monospace';
+        dnnCtx.textAlign = 'left'; dnnCtx.textBaseline = 'middle';
+        dnnCtx.fillText((v*100).toFixed(0)+'%',
+                        labelX, labelMode === 'pct' ? cy : cy + 10*dpr);
       }
     }
   }

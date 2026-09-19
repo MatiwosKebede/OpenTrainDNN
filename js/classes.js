@@ -144,8 +144,9 @@ function removeSample(ci, idx){
   rebuildClassesUI();
 }
 
+/* Up to 64 classes. */
 function addClass(){
-  if(classes.length >= 8){ alert('Maximum 8 classes.'); return; }
+  if(classes.length >= 64){ alert('Maximum 64 classes.'); return; }
   const id = nextClassId++;
   classes.push({
     id,
