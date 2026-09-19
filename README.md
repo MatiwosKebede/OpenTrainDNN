@@ -245,7 +245,7 @@ See [SECURITY.md](SECURITY.md) for the disclosure policy.
 MIT. See [LICENSE](LICENSE) for the full text.
 
 
-** Developed by Matiwos Kebede**
+**Developed by Matiwos Kebede**
 
 *The same learning algorithm runs in a browser tab and in a data center.*
 *The difference is only scale.*
