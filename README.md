@@ -11,9 +11,6 @@ Every neuron, every weight, every activation updates on screen in real time.
 **No install. No build step. No framework. No backend.**
 
 
-> **A note on the name.** This project is unrelated to OpenTrain AI (a data-labeling marketplace) and to Intel oneDNN (a deep-learning performance library). Same words, entirely different projects.
-
-
 ## Table of contents
 
 - [Why this exists](#why-this-exists)
@@ -248,7 +245,7 @@ See [SECURITY.md](SECURITY.md) for the disclosure policy.
 MIT. See [LICENSE](LICENSE) for the full text.
 
 
-** Developed by Matiwos Kebede**
+**Developed by Matiwos Kebede**
 
 *The same learning algorithm runs in a browser tab and in a data center.*
 *The difference is only scale.*
