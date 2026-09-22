@@ -1,10 +1,8 @@
 # OpenTrainDNN
 
-**Watch a neural network learn — in your browser.**
+**OpenTrainDNN: A Browser-Based Real-Time Neural Network Visualizer.**
 
-Open one HTML file. Point your camera or microphone at two things.
-Capture twenty samples of each. Press **Train**.
-Every neuron, every weight, every activation updates on screen in real time.
+OpenTrainDNN is an open-source, client-side web application designed to render the step-by-step training mechanics of deep neural networks in real-time. It provides direct visibility into backpropagation, activation flows, and weight updates without requiring backend servers, specialized hardware drivers, or local installation.
 
 ![OpenTrainDNN screenshot](docs/screenshot.png)
 
